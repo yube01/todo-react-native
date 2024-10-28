@@ -3,9 +3,8 @@ import React from 'react'
 import { StyleSheet } from 'react-native'
 
 const index = () => {
-  return (
-    <Redirect href="/(tabs)/home"/>
-  )
+  return <Redirect href="/(authenticate)/login" />
+
 }
 
 export default index
