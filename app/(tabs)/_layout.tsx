@@ -22,6 +22,11 @@ export default function Layout() {
                     focused ? (<MaterialIcons name="account-circle" size={24} color="#7CB9E8" />) : (<MaterialIcons name="account-circle" size={24} color="black" />)
 
             }} />
+            <Tabs.Screen name="todo" options={{
+                tabBarLabel: "Todo", tabBarLabelStyle: { color: "#7CB9E8" }, headerShown: false, tabBarIcon: ({ focused }) =>
+                    focused ? (<MaterialIcons name="account-circle" size={24} color="#7CB9E8" />) : (<MaterialIcons name="account-circle" size={24} color="black" />)
+
+            }} />
         </Tabs>
     )
 
