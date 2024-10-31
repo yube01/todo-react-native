@@ -36,7 +36,7 @@ const EditTodoModal: React.FC<EditTodoModalProps> = ({
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Edit Todo</Text>
+          <Text style={styles.modalTitle}>Edit Todo Item</Text>
           <TextInput
             style={styles.modalInput}
             value={updatedText}

@@ -9,12 +9,14 @@ import {
   StyleSheet,
   Alert,
   Modal,
+  Animated,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ConfirmModal from '@/components/ConfirmModal';
 import EditTodoModal from '@/components/EditModal';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import NameModal from '@/components/NameModal';
+import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 
 interface Todo {
   id: string;
@@ -143,11 +145,13 @@ const App: React.FC = () => {
   };
 
 
+
   return (
     <>
-      <View style={styles.container}>
-        <Text style={styles.title}>Todo List</Text>
-        {/* {name ? (
+      <GestureHandlerRootView>
+        <View style={styles.container}>
+          <Text style={styles.title}>Todo List</Text>
+          {/* {name ? (
         <>
           <Text style={styles.welcomeText}>Welcome, {name}!</Text>
           <TouchableOpacity style={styles.clearButton} onPress={clearName}>
@@ -161,73 +165,87 @@ const App: React.FC = () => {
         onSave={saveName}
         onClose={() => setIsNameModalVisible(false)}
       /> */}
-        
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter a todo..."
-            value={todo}
-            onChangeText={setTodo}
-            onSubmitEditing={addTodo}
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter a todo..."
+              value={todo}
+              onChangeText={setTodo}
+              onSubmitEditing={addTodo}
+            />
+            <TouchableOpacity style={styles.addButton} onPress={addTodo}>
+              <Text style={styles.addButtonText}>Add</Text>
+            </TouchableOpacity>
+
+
+          </View>
+          <View style={styles.actionButtons}>
+            <TouchableOpacity style={[styles.uncheckButton, !hasCompletedTodos && styles.clearButtonDisabled]} onPress={uncheckAll} disabled={!hasCompletedTodos}
+            >
+              <Text style={styles.uncheckButtonText} >Uncheck All</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.clearButton, todos.length === 0 && styles.clearButtonDisabled]}
+              onPress={clearAll}
+              disabled={todos.length === 0} >
+              <Text style={styles.clearButtonText}>Clear All</Text>
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={todos.sort((a, b) => Number(a.completed) - Number(b.completed))}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <Swipeable
+                renderRightActions={(progress, dragX) => {
+                  const scale = progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 1], // Scale from invisible to fully visible
+                    extrapolate: 'clamp', // Prevent values from going beyond [0,1]
+                  });
+                
+                  return (
+                    <TouchableOpacity onPress={() => deleteTodo(item.id)}>
+                      <Animated.View style={[styles.deleteAction, { transform: [{ scale }] }]}>
+                        <MaterialIcons name="delete" size={24} color="white" />
+                      </Animated.View>
+                    </TouchableOpacity>
+                  );
+                }}
+              >
+                <View style={styles.todoItem}>
+                  <Pressable
+                    style={[
+                      styles.checkbox,
+                      item.completed && styles.checkboxChecked,
+                    ]}
+                    onPress={() => toggleTodo(item.id)}
+                  >
+                    {item.completed && <Text style={styles.checkmark}>✓</Text>}
+                  </Pressable>
+                  <Text style={[styles.todoText, item.completed && styles.completedTodo]}>
+                    {item.text}
+                  </Text>
+                  <TouchableOpacity onPress={() => openEditModal(item)}>
+                    <MaterialIcons name="edit" size={24} color="white" />
+                  </TouchableOpacity>
+                </View>
+              </Swipeable>
+            )}
           />
-          <TouchableOpacity style={styles.addButton} onPress={addTodo}>
-            <Text style={styles.addButtonText}>Add</Text>
-          </TouchableOpacity>
-
 
         </View>
-        <View style={styles.actionButtons}>
-          <TouchableOpacity style={[styles.uncheckButton, !hasCompletedTodos && styles.clearButtonDisabled]} onPress={uncheckAll} disabled={!hasCompletedTodos}
-          >
-            <Text style={styles.uncheckButtonText} >Uncheck All</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.clearButton, todos.length === 0 && styles.clearButtonDisabled]}
-            onPress={clearAll}
-            disabled={todos.length === 0} >
-            <Text style={styles.clearButtonText}>Clear All</Text>
-          </TouchableOpacity>
-        </View>
-
-
-        <FlatList
-          data={todos}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.todoItem}>
-              <Pressable
-                style={[
-                  styles.checkbox,
-                  item.completed && styles.checkboxChecked,
-                ]}
-                onPress={() => toggleTodo(item.id)}
-              >
-                {item.completed && <Text style={styles.checkmark}>✓</Text>}
-              </Pressable>
-              <Text style={[styles.todoText, item.completed && styles.completedTodo]}>
-                {item.text}
-              </Text>
-              <TouchableOpacity
-                onPress={() => openEditModal(item)}
-              >
-                <Text style={styles.deleteText}><MaterialIcons name="edit" size={24} color="white" /></Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => deleteTodo(item.id)}>
-                <Text style={styles.deleteText}><MaterialIcons name="delete" size={24} color="white" /></Text>
-              </TouchableOpacity>
-            </View>
-          )}
+        <ConfirmModal visible={isModalVisible}
+          onCancel={() => setIsModalVisible(false)}
+          onConfirm={confirmClearAll}
+          message="Are you sure you want to delete all todo items?" />
+        <EditTodoModal
+          visible={isEditModalVisible}
+          onClose={() => setIsEditModalVisible(false)}
+          onConfirm={handleEditConfirm}
+          initialText={currentTodo ? currentTodo.text : ''}
         />
-      </View>
-      <ConfirmModal visible={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
-        onConfirm={confirmClearAll}
-        message="Are you sure you want to delete all todo items?" />
-      <EditTodoModal
-        visible={isEditModalVisible}
-        onClose={() => setIsEditModalVisible(false)}
-        onConfirm={handleEditConfirm}
-        initialText={currentTodo ? currentTodo.text : ''}
-      />
+      </GestureHandlerRootView>
+
     </>
 
   );
@@ -314,7 +332,8 @@ const styles = StyleSheet.create({
   todoItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 15
+    padding: 15,
+    marginBottom:3
 
   },
   todoText: {
@@ -326,9 +345,13 @@ const styles = StyleSheet.create({
     textDecorationLine: 'line-through',
     color: 'gray',
   },
-  deleteText: {
-    marginLeft: 20,
-    fontWeight: 'bold',
+  deleteAction: {
+    backgroundColor: 'red',
+    display:"flex",
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 70,
+    height: '100%',
   },
   checkbox: {
     width: 24,
