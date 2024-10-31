@@ -4,7 +4,7 @@
     "slug": "Todo_App",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo1.png",
+    "icon": "./assets/images/andIcon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo1.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.yube08.Todo_App"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ac30cf95-2c6c-4259-99a1-55109f460813"
+      }
     }
   }
 }
