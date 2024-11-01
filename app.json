@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "todo",
-    "slug": "todo",
-    "version": "1.0.0",
+    "name": "Todo App",
+    "slug": "Todo_App",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/images/todo.png",
-    "scheme": "Todo",
+    "icon": "./assets/images/andIcon.png",
+    "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/todo.png",
+      "image": "./assets/images/logo1.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,15 +17,15 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/todo.png",
+        "foregroundImage": "./assets/images/logo1.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.yube08.todo"
+      "package": "com.yube08.Todo_App"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/todo.png"
+      "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router"
@@ -35,7 +35,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "12d2d44a-dbf6-4808-80bf-4bf350b9fde4"
+        "projectId": "ac30cf95-2c6c-4259-99a1-55109f460813"
       }
     }
   }
